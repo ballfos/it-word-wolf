@@ -17,6 +17,8 @@ import {
 import { generateContent } from "./services/gemini";
 import { cors } from "hono/cors";
 
+const geminiApiCallCount = "gemini_call_count";
+
 const app = new Hono<{ Bindings: Bindings }>();
 
 // CORS設定
@@ -32,6 +34,7 @@ app.use("*", (c, next) => {
 	return next();
 });
 
+// APIエンドポイントの定義
 app.get("/categories", async (c) => {
 	const categoryRecords = await getCategories(c.env.DB);
 	return c.json(categoryRecords);
@@ -88,9 +91,8 @@ app.get(
 		);
 
 		// GeminiAPIの使用上限を確認
-		const callCountKey = "gemini_call_count";
-		const callCount = Number(await c.env.IWW_KV.get(callCountKey)) || 0;
-		c.env.IWW_KV.put(callCountKey, String(callCount + 1));
+		const callCount = Number(await c.env.IWW_KV.get(geminiApiCallCount)) || 0;
+		c.env.IWW_KV.put(geminiApiCallCount, String(callCount + 1));
 
 		// 上限に到達している場合はデータベースからランダムに返答
 		if (callCount >= Number(c.env.GEMINI_CALL_LIMIT)) {
@@ -133,4 +135,13 @@ app.get(
 	},
 );
 
-export default app;
+export default {
+	fetch: app.fetch,
+	scheduled: async (
+		event: ScheduledEvent,
+		env: Bindings,
+		ctx: ExecutionContext,
+	) => {
+		await env.IWW_KV.put(geminiApiCallCount, "0");
+	},
+};

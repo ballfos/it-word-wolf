@@ -6,9 +6,9 @@
   // "compatibility_flags": [
   //   "nodejs_compat"
   // ],
-  // "vars": {
-  //   "MY_VAR": "my-variable"
-  // },
+  "vars": {
+    "GEMINI_CALL_LIMIT": "10"
+  },
   "kv_namespaces": [
     {
       "binding": "IWW_KV",
@@ -27,7 +27,7 @@
       "database_name": "iww-db",
       "database_id": "4b42247f-2839-4bb2-9c0f-d629d5700fe7"
     }
-  ]
+  ],
   // "ai": {
   //   "binding": "AI"
   // },
@@ -35,4 +35,9 @@
   //   "enabled": true,
   //   "head_sampling_rate": 1
   // }
+  "triggers": {
+    "crons": [
+      "0 0 * * *"
+    ]
+  }
 }
