@@ -6,9 +6,8 @@
   // "compatibility_flags": [
   //   "nodejs_compat"
   // ],
-  "vars": {
-    "GEMINI_CALL_LIMIT": "10"
-  },
+  // "vars": {
+  // },
   "kv_namespaces": [
     {
       "binding": "IWW_KV",
@@ -25,7 +24,7 @@
     {
       "binding": "DB",
       "database_name": "iww-db",
-      "database_id": "4b42247f-2839-4bb2-9c0f-d629d5700fe7"
+      "database_id": "8cda573e-deec-4b60-b566-3afe143f41f5"
     }
   ],
   // "ai": {
@@ -35,9 +34,9 @@
   //   "enabled": true,
   //   "head_sampling_rate": 1
   // }
-  "triggers": {
-    "crons": [
-      "0 0 * * *"
-    ]
-  }
+  // "triggers": {
+  //   "crons": [
+  //     "0 0 * * *"
+  //   ]
+  // }
 }

@@ -1,23 +1,22 @@
-import { Hono } from "hono";
-import type { Bindings } from "./bindings";
-import z from "zod";
 import { zValidator } from "@hono/zod-validator";
+import { Hono } from "hono";
+import { cors } from "hono/cors";
+import z from "zod";
+import type { Bindings } from "./bindings";
 import {
-	addHistory,
 	type CategoryRecord,
 	type DifficultyRecord,
 	getCategories,
 	getCategoryById,
 	getDifficulties,
-	getDifficultyByLevel,
+	getDifficultyById,
 	getRandomCategory,
 	getRandomDifficulty,
-	getRandomHistoryByCategoryAndDifficulty,
+	getSubcategoriesByCategoryId,
+	getWords,
+	type SubcategoryRecord,
+	WordRecord,
 } from "./services/database";
-import { generateContent } from "./services/gemini";
-import { cors } from "hono/cors";
-
-const geminiApiCallCount = "gemini_call_count";
 
 const app = new Hono<{ Bindings: Bindings }>();
 
@@ -51,15 +50,13 @@ app.get(
 		"query",
 		z.object({
 			category_id: z.coerce.number().int().positive().optional(),
-			difficulty_level: z.coerce.number().int().positive().optional(),
+			difficulty_id: z.coerce.number().int().positive().optional(),
 		}),
 	),
 	async (c) => {
 		// クエリパラメータの処理
-		const {
-			category_id: queryCategoryId,
-			difficulty_level: queryDifficultyLevel,
-		} = c.req.valid("query");
+		const { category_id: queryCategoryId, difficulty_id: queryDifficultyId } =
+			c.req.valid("query");
 
 		// カテゴリの取得
 		let categoryRecord: CategoryRecord | null = null;
@@ -74,11 +71,8 @@ app.get(
 
 		// 難易度の取得
 		let difficultyRecord: DifficultyRecord | null = null;
-		if (queryDifficultyLevel) {
-			difficultyRecord = await getDifficultyByLevel(
-				c.env.DB,
-				queryDifficultyLevel,
-			);
+		if (queryDifficultyId) {
+			difficultyRecord = await getDifficultyById(c.env.DB, queryDifficultyId);
 		} else {
 			difficultyRecord = await getRandomDifficulty(c.env.DB);
 		}
@@ -86,62 +80,48 @@ app.get(
 			return c.json({ error: "Difficulty not found." }, 404);
 		}
 
-		console.log(
-			`Category: ${categoryRecord.name}, Difficulty: ${difficultyRecord.name}`,
+		// サブカテゴリーの取得
+		const subcategoryRecords = await getSubcategoriesByCategoryId(
+			c.env.DB,
+			categoryRecord.id,
 		);
+		if (subcategoryRecords.length === 0) {
+			return c.json({ error: "Subcategory not found." }, 404);
+		}
 
-		// GeminiAPIの使用上限を確認
-		const callCount = Number(await c.env.IWW_KV.get(geminiApiCallCount)) || 0;
-		c.env.IWW_KV.put(geminiApiCallCount, String(callCount + 1));
-
-		// 上限に到達している場合はデータベースからランダムに返答
-		if (callCount >= Number(c.env.GEMINI_CALL_LIMIT)) {
-			const historyRecord = await getRandomHistoryByCategoryAndDifficulty(
-				c.env.DB,
-				categoryRecord.id,
-				difficultyRecord.id,
-			);
-			if (historyRecord) {
-				return c.json({
-					category: categoryRecord.name,
-					subCategory: historyRecord.sub_category,
-					difficulty: difficultyRecord.name,
-					words: JSON.parse(historyRecord.words),
-				});
-			} else {
-				return c.json({ error: "No history found." }, 404);
+		// 単語の取得
+		subcategoryRecords.sort(() => Math.random() - 0.5); // ランダムに並び替え
+		let subcategoryRecord: SubcategoryRecord | null = null;
+		let wordRecords: WordRecord[] = [];
+		for (const record of subcategoryRecords) {
+			wordRecords = await getWords(c.env.DB, record.id, difficultyRecord.id);
+			if (wordRecords.length > 0) {
+				subcategoryRecord = record;
+				break;
 			}
 		}
-
-		// Gemini APIを使用してコンテンツを生成
-		try {
-			const content = await generateContent(
-				c.env.GEMINI_API_KEY,
-				categoryRecord.name,
-				difficultyRecord.name,
+		if (!subcategoryRecord) {
+			return c.json(
+				{ error: "No words found for the selected category and difficulty." },
+				404,
 			);
-			await addHistory(
-				c.env.DB,
-				categoryRecord.id,
-				content.subCategory,
-				difficultyRecord.id,
-				JSON.stringify(content.words),
-			);
-			return c.json(content);
-		} catch (error) {
-			console.error("Error generating content:", error);
-			return c.json({ error: "Failed to generate content." }, 500);
 		}
+
+		return c.json({
+			categoryId: categoryRecord.id,
+			categoryName: categoryRecord.name,
+			subcategoryId: subcategoryRecord.id,
+			subcategoryName: subcategoryRecord.name,
+			difficultyId: difficultyRecord.id,
+			difficultyName: difficultyRecord.name,
+			words: wordRecords.map((record) => ({
+				id: record.id,
+				nameJp: record.word_ja,
+				nameEn: record.word_en,
+				explanation: record.explanation,
+			})),
+		});
 	},
 );
 
-export default {
-	fetch: app.fetch,
-	scheduled: async (
-		event: ScheduledEvent,
-		env: Bindings,
-		ctx: ExecutionContext,
-	) => {
-		await env.IWW_KV.put(geminiApiCallCount, "0");
-	},
-};
+export default app;
