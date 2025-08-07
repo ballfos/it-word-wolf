@@ -15,7 +15,7 @@ import {
 	getSubcategoriesByCategoryId,
 	getWords,
 	type SubcategoryRecord,
-	WordRecord,
+	type WordRecord,
 } from "./services/database";
 
 const app = new Hono<{ Bindings: Bindings }>();
@@ -107,20 +107,7 @@ app.get(
 			);
 		}
 
-		return c.json({
-			categoryId: categoryRecord.id,
-			categoryName: categoryRecord.name,
-			subcategoryId: subcategoryRecord.id,
-			subcategoryName: subcategoryRecord.name,
-			difficultyId: difficultyRecord.id,
-			difficultyName: difficultyRecord.name,
-			words: wordRecords.map((record) => ({
-				id: record.id,
-				nameJp: record.word_ja,
-				nameEn: record.word_en,
-				explanation: record.explanation,
-			})),
-		});
+		return c.json(wordRecords);
 	},
 );
 

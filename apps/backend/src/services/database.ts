@@ -1,4 +1,5 @@
 import type { D1Database } from "@cloudflare/workers-types";
+import camelcaseKeys from "camelcase-keys";
 
 export type CategoryRecord = {
 	id: number;
@@ -7,7 +8,7 @@ export type CategoryRecord = {
 
 export type SubcategoryRecord = {
 	id: number;
-	category_id: number;
+	categoryId: number;
 	name: string;
 };
 
@@ -19,10 +20,14 @@ export type DifficultyRecord = {
 
 export type WordRecord = {
 	id: number;
-	subcategory_id: number;
-	difficulty_id: number;
-	word_en: string;
-	word_ja: string;
+	categoryId: number;
+	categoryName: string;
+	subcategoryId: number;
+	subcategoryName: string;
+	difficultyId: number;
+	difficultyName: string;
+	wordEn: string;
+	wordJa: string;
 	explanation: string;
 };
 
@@ -53,8 +58,11 @@ export async function getRandomSubcategoryByCategoryId(
 			"SELECT * FROM subcategories WHERE category_id = ? ORDER BY RANDOM() LIMIT 1",
 		)
 		.bind(categoryId)
-		.first<SubcategoryRecord>();
-	return result;
+		.first();
+	if (!result) {
+		return null;
+	}
+	return camelcaseKeys(result, { deep: true }) as SubcategoryRecord;
 }
 
 export async function getSubcategoriesByCategoryId(
@@ -65,7 +73,9 @@ export async function getSubcategoriesByCategoryId(
 		.prepare("SELECT * FROM subcategories WHERE category_id = ?")
 		.bind(categoryId)
 		.all<SubcategoryRecord>();
-	return results;
+	return results.map((subcategory) =>
+		camelcaseKeys(subcategory, { deep: true }),
+	) as SubcategoryRecord[];
 }
 
 export async function getRandomCategory(
@@ -113,9 +123,16 @@ export async function getWords(
 ): Promise<WordRecord[]> {
 	const { results } = await db
 		.prepare(
-			"SELECT * FROM words WHERE subcategory_id = ? AND difficulty_id = ?",
+			`SELECT w.id, s.category_id, c.name AS category_name, w.subcategory_id, s.name AS subcategory_name, w.difficulty_id, d.name AS difficulty_name, w.word_en, w.word_ja, w.explanation
+			FROM words w
+			JOIN subcategories s ON w.subcategory_id = s.id
+			JOIN difficulties d ON w.difficulty_id = d.id
+			JOIN categories c ON s.category_id = c.id
+			WHERE w.subcategory_id = ? AND w.difficulty_id = ?`,
 		)
 		.bind(subcategoryId, difficultyId)
-		.all<WordRecord>();
-	return results;
+		.all();
+	return results.map((word) =>
+		camelcaseKeys(word, { deep: true }),
+	) as WordRecord[];
 }
