@@ -15,6 +15,7 @@ import StepIndicator from "@/components/StepIndicator";
 import TextInputList from "@/components/TextInputList";
 import CategoriesAccordion from "@/components/CategoriesAccordion";
 import useCategories from "@/hooks/useCategories";
+
 const STEPS = ["ルール設定", "名前入力"];
 const MIN_PLAYER_COUNT = 3;
 const MAX_PLAYER_COUNT = 20;
@@ -23,6 +24,7 @@ export default function Home() {
 	const navigate = useNavigate();
 	const [currentStepIndex, setCurrentStepIndex] = useState(0);
 	const [playerCount, setPlayerCount] = useState(4);
+	const [wolfCount, setWolfCount] = useState(1);
 	const [playerNames, setPlayerNames] = useState<string[]>(
 		Array(playerCount).fill(""),
 	);
@@ -30,10 +32,17 @@ export default function Home() {
 	const { categories, selectedCategories, setSelectedCategories } =
 		useCategories();
 
-
 	useEffect(() => {
 		setPlayerNames(Array(playerCount).fill(""));
-	}, [playerCount]);	/* ===========================
+	}, [playerCount]);
+
+	useEffect(() => {
+		if (wolfCount > Math.floor(playerCount / 2)) {
+			setWolfCount(Math.floor(playerCount / 2));
+		}
+	}, [wolfCount, playerCount]);
+
+	/* ===========================
 	 * イベントハンドラ
 	 * =========================== */
 	const handleClearPlayerNames = () => {
@@ -72,10 +81,8 @@ export default function Home() {
 					players: playerNames.map((name) => ({
 						name: name.trim(),
 					})),
-					categories: selectedCategories.map((category) => ({
-						id: category.id,
-						name: category.name,
-					})),
+					wolfCount,
+					categories: selectedCategories,
 				},
 			});
 		}
@@ -88,114 +95,131 @@ export default function Home() {
 	 * レンダリング
 	 * =========================== */
 	return (
-		<VStack minH="100svh" w="100svw" pt="10" p={4}>
-			{/* タイトル */}
-			<Heading as="h1" size="4xl" mb={4} textAlign="center">
-				エンジニア
-				<br />
-				ワードウルフ
-			</Heading>
-			<VStack
-				bgGradient="to-br"
-				gradientFrom="teal.700"
-				gradientTo="blue.700"
-				p={8}
-				borderRadius="md"
-				boxShadow="lg"
-				w="full"
-				maxW="md"
-			>
-				{/* ステップインジケーター */}
-				<StepIndicator steps={STEPS} currentIndex={currentStepIndex} />
+		<Center minH="100svh" w="100svw" p={4}>
+			<VStack maxW="md" w="full" pt="10" p={4}>
+				{/* タイトル */}
+				<Heading as="h1" size="4xl" mb={4} textAlign="center">
+					エンジニア
+					<br />
+					ワードウルフ
+				</Heading>
+				<VStack
+					bgGradient="to-br"
+					gradientFrom="teal.700"
+					gradientTo="blue.700"
+					p={8}
+					borderRadius="md"
+					boxShadow="lg"
+					w="full"
+					maxW="md"
+				>
+					{/* ステップインジケーター */}
+					<StepIndicator steps={STEPS} currentIndex={currentStepIndex} />
 
-				{currentStepIndex === 0 && (
-					<VStack p={4}>
-						{/* プレイヤー人数入力 */}
-						<Heading as="h3" size="lg" mt={8}>
-							プレイヤー人数を入力
-						</Heading>
-						<NumberStepper
-							value={playerCount}
-							onValueChange={setPlayerCount}
-							min={MIN_PLAYER_COUNT}
-							max={MAX_PLAYER_COUNT}
-						/>
-						<CategoriesAccordion
-							categories={categories}
-							selectedCategories={selectedCategories}
-							setSelectedCategories={setSelectedCategories}
-						/>
-					</VStack>
-				)}
+					{currentStepIndex === 0 && (
+						<VStack p={4} gap={4}>
+							{/* プレイヤー人数入力 */}
+							<Heading as="h3" size="lg">
+								プレイヤー人数
+							</Heading>
+							<NumberStepper
+								value={playerCount}
+								onValueChange={setPlayerCount}
+								min={MIN_PLAYER_COUNT}
+								max={MAX_PLAYER_COUNT}
+							/>
 
-				{currentStepIndex === 1 && (
-					<>
-						{/* プレイヤー名入力 */}
-						<Heading as="h3" size="lg" mt={8}>
-							プレイヤー名を入力
-						</Heading>
-						<Center mb={4}>
-							<Icon as={LuUser} boxSize={8} color="teal.300" />
-						</Center>
-						<TextInputList
-							values={playerNames}
-							onValuesChange={setPlayerNames}
-							placeholder="プレイヤー名を入力"
-							startElement={
-								<Icon>
-									<LuUser />
-								</Icon>
+							{/* ウルフ人数入力 */}
+							<Heading as="h3" size="lg">
+								ウルフ人数
+							</Heading>
+							<NumberStepper
+								value={wolfCount}
+								onValueChange={setWolfCount}
+								min={1}
+								max={Math.floor(playerCount / 2)} // ウルフはプレイヤーの半分以下
+							/>
+
+							{/* カテゴリ選択 */}
+							<CategoriesAccordion
+								categories={categories}
+								selectedCategories={selectedCategories}
+								setSelectedCategories={setSelectedCategories}
+							/>
+						</VStack>
+					)}
+
+					{currentStepIndex === 1 && (
+						<>
+							{/* プレイヤー名入力 */}
+							<Heading as="h3" size="lg" mt={8}>
+								プレイヤー名を入力
+							</Heading>
+							<Center mb={4}>
+								<Icon as={LuUser} boxSize={8} color="teal.300" />
+							</Center>
+							<TextInputList
+								values={playerNames}
+								onValuesChange={setPlayerNames}
+								placeholder="プレイヤー名を入力"
+								startElement={
+									<Icon>
+										<LuUser />
+									</Icon>
+								}
+							/>
+							<HStack w="full" justifyContent="right" mt={4}>
+								<Button
+									colorScheme="teal"
+									variant="subtle"
+									onClick={handleClearPlayerNames}
+									mb={4}
+									size="sm"
+								>
+									入力削除
+								</Button>
+								<Button
+									colorScheme="teal"
+									variant="subtle"
+									onClick={handleFillPlayerNames}
+									mb={4}
+									size="sm"
+								>
+									入力自動
+								</Button>
+							</HStack>
+						</>
+					)}
+
+					<Separator w="full" my={2} />
+
+					<HStack w="full" justifyContent="space-between">
+						{/* 戻るボタン */}
+						<Button
+							colorScheme="teal"
+							variant="ghost"
+							fontWeight="bold"
+							onClick={handleBack}
+							disabled={currentStepIndex === 0}
+						>
+							<Icon as={LuArrowLeft} />
+							戻る
+						</Button>
+						{/* 次へボタン */}
+						<Button
+							colorScheme="teal"
+							variant={
+								currentStepIndex === STEPS.length - 1 ? "solid" : "ghost"
 							}
-						/>
-						<HStack w="full" justifyContent="right" mt={4}>
-							<Button
-								colorScheme="teal"
-								variant="subtle"
-								onClick={handleClearPlayerNames}
-								mb={4}
-								size="sm"
-							>
-								入力削除
-							</Button>
-							<Button
-								colorScheme="teal"
-								variant="subtle"
-								onClick={handleFillPlayerNames}
-								mb={4}
-								size="sm"
-							>
-								入力自動
-							</Button>
-						</HStack>
-					</>
-				)}
-
-				<Separator w="full" my={2} />
-
-				<HStack w="full" justifyContent="space-between">
-					{/* 戻るボタン */}
-					<Button
-						colorScheme="teal"
-						variant="ghost"
-						fontWeight="bold"
-						onClick={handleBack}
-						disabled={currentStepIndex === 0}
-					>
-						<Icon as={LuArrowLeft} />
-						戻る
-					</Button>
-					{/* 次へボタン */}
-					<Button
-						colorScheme="teal"
-						variant={currentStepIndex === STEPS.length - 1 ? "solid" : "ghost"}
-						fontWeight="bold"
-						onClick={handleNext}
-					>
-						{currentStepIndex === STEPS.length - 1 ? "開始" : "次へ"}
-						<Icon as={LuArrowRight} />
-					</Button>
-				</HStack>
+							fontWeight="bold"
+							onClick={handleNext}
+						>
+							{currentStepIndex === STEPS.length - 1 ? "開始" : "次へ"}
+							<Icon as={LuArrowRight} />
+						</Button>
+					</HStack>
+				</VStack>
 			</VStack>
-		</VStack>
+		</Center>
 	);
 }
