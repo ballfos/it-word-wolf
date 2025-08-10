@@ -6,6 +6,7 @@ import {
 	Icon,
 	Separator,
 	VStack,
+	Text
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { LuArrowLeft, LuArrowRight, LuUser } from "react-icons/lu";
@@ -14,8 +15,10 @@ import NumberStepper from "@/components/NumberStepper";
 import StepIndicator from "@/components/StepIndicator";
 import TextInputList from "@/components/TextInputList";
 import CategoriesAccordion from "@/components/CategoriesAccordion";
+import DifficultiesSlider from "@/components/DifficultiesSlider";
 import useCategories from "@/hooks/useCategories";
-const STEPS = ["ルール設定", "名前入力"];
+import useDifficulties from "@/hooks/useDifficulties";
+const STEPS = ["難易度・カテゴリ選択", "人数設定", "名前入力"];
 const MIN_PLAYER_COUNT = 3;
 const MAX_PLAYER_COUNT = 20;
 
@@ -27,9 +30,10 @@ export default function Home() {
 		Array(playerCount).fill(""),
 	);
 	// カテゴリの取得
-	const { categories, selectedCategories, setSelectedCategories } =
-		useCategories();
-
+	const { categories, selectedCategories, setSelectedCategories } = useCategories();
+	const difficulties = useDifficulties();
+	const [minLevel, setMinLevel] = useState<number>(1);
+	const [maxLevel, setMaxLevel] = useState<number>(4);
 
 	useEffect(() => {
 		setPlayerNames(Array(playerCount).fill(""));
@@ -76,6 +80,8 @@ export default function Home() {
 						id: category.id,
 						name: category.name,
 					})),
+					minLevel,
+					maxLevel,
 				},
 			});
 		}
@@ -110,15 +116,16 @@ export default function Home() {
 
 				{currentStepIndex === 0 && (
 					<VStack p={4}>
-						{/* プレイヤー人数入力 */}
+						{/* 難易度・カテゴリ選択 */}
 						<Heading as="h3" size="lg" mt={8}>
-							プレイヤー人数を入力
+							難易度・カテゴリを選択
 						</Heading>
-						<NumberStepper
-							value={playerCount}
-							onValueChange={setPlayerCount}
-							min={MIN_PLAYER_COUNT}
-							max={MAX_PLAYER_COUNT}
+						<DifficultiesSlider
+							minLevel={minLevel}
+							maxLevel={maxLevel}
+							setMinLevel={setMinLevel}
+							setMaxLevel={setMaxLevel}
+							difficulties={difficulties}
 						/>
 						<CategoriesAccordion
 							categories={categories}
@@ -129,6 +136,22 @@ export default function Home() {
 				)}
 
 				{currentStepIndex === 1 && (
+					<VStack p={4}>
+						{/* プレイヤー人数入力 */}
+						<Heading as="h3" size="lg" mt={8}>
+							プレイヤー人数を入力
+						</Heading>
+						<NumberStepper
+							value={playerCount}
+							onValueChange={setPlayerCount}
+							min={MIN_PLAYER_COUNT}
+							max={MAX_PLAYER_COUNT}
+						/>
+
+					</VStack>
+				)}
+
+				{currentStepIndex === 2 && (
 					<>
 						{/* プレイヤー名入力 */}
 						<Heading as="h3" size="lg" mt={8}>

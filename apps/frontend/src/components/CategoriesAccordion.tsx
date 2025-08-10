@@ -19,7 +19,7 @@ export default function CategoriesAccordion({ categories, selectedCategories, se
         setSelectedCategories(updated)
     }
     return (
-        <Accordion.Root collapsible size="sm" width="100%">
+        <Accordion.Root collapsible size="sm" width="100%" defaultValue={["domain"]}>
             <Accordion.Item value="domain" border="none" >
                 <h2>
                     <Accordion.ItemTrigger>
