@@ -22,13 +22,10 @@ export default function Assignment() {
 			maxLevel: number;
 			difficulties: { id: number; name: string }[];
 		};
-		console.log(categories);
 
 		async function fetchData() {
 			const categoryId = categories[Math.floor(Math.random() * categories.length)].id;
 			const difficultyLevel = Math.floor(Math.random() * (maxLevel - minLevel + 1)) + minLevel;
-			console.log(minLevel, maxLevel, difficultyLevel);
-
 			const words = await fetchWords(categoryId, difficultyLevel);
 			if (!words || words.length === 0) {
 				alert("お題の取得に失敗しました。");

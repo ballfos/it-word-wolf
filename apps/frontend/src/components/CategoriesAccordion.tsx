@@ -1,9 +1,5 @@
 import { Accordion, VStack, For, Checkbox } from "@chakra-ui/react";
-
-export type Category = {
-    id: number;
-    name: string;
-};
+import type { Category } from "@/api";
 export type CategoriesAccordionProps = {
     categories: Category[];
     selectedCategories: Category[];
