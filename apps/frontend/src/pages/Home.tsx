@@ -14,8 +14,7 @@ import NumberStepper from "@/components/NumberStepper";
 import StepIndicator from "@/components/StepIndicator";
 import TextInputList from "@/components/TextInputList";
 import CategoriesAccordion from "@/components/CategoriesAccordion";
-import { fetchCategories, type Category } from "@/api";
-
+import useCategories from "@/hooks/useCategories";
 const STEPS = ["ルール設定", "名前入力"];
 const MIN_PLAYER_COUNT = 3;
 const MAX_PLAYER_COUNT = 20;
@@ -28,20 +27,9 @@ export default function Home() {
 		Array(playerCount).fill(""),
 	);
 	// カテゴリの取得
-	const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
-	const [categories, setCategories] = useState<Category[]>([]);
-	useEffect(() => {
-		const loadCategories = async () => {
-			try {
-				const data = await fetchCategories();
-				setCategories(data);
-				setSelectedCategories(data);
-			} catch (error) {
-				console.error("Failed to load categories:", error);
-			}
-		};
-		loadCategories();
-	}, []);
+	const { categories, selectedCategories, setSelectedCategories } =
+		useCategories();
+
 
 	useEffect(() => {
 		setPlayerNames(Array(playerCount).fill(""));
