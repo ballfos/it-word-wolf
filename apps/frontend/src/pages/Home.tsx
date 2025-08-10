@@ -13,6 +13,8 @@ import { useNavigate } from "react-router-dom";
 import NumberStepper from "@/components/NumberStepper";
 import StepIndicator from "@/components/StepIndicator";
 import TextInputList from "@/components/TextInputList";
+import CategoriesAccordion from "@/components/CategoriesAccordion";
+import { fetchCategories, type Category } from "@/api";
 
 const STEPS = ["ルール設定", "名前入力"];
 const MIN_PLAYER_COUNT = 3;
@@ -25,12 +27,25 @@ export default function Home() {
 	const [playerNames, setPlayerNames] = useState<string[]>(
 		Array(playerCount).fill(""),
 	);
+	// カテゴリの取得
+	const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
+	const [categories, setCategories] = useState<Category[]>([]);
+	useEffect(() => {
+		const loadCategories = async () => {
+			try {
+				const data = await fetchCategories();
+				setCategories(data);
+				setSelectedCategories(data);
+			} catch (error) {
+				console.error("Failed to load categories:", error);
+			}
+		};
+		loadCategories();
+	}, []);
 
 	useEffect(() => {
 		setPlayerNames(Array(playerCount).fill(""));
-	}, [playerCount]);
-
-	/* ===========================
+	}, [playerCount]);	/* ===========================
 	 * イベントハンドラ
 	 * =========================== */
 	const handleClearPlayerNames = () => {
@@ -69,6 +84,10 @@ export default function Home() {
 					players: playerNames.map((name) => ({
 						name: name.trim(),
 					})),
+					categories: selectedCategories.map((category) => ({
+						id: category.id,
+						name: category.name,
+					})),
 				},
 			});
 		}
@@ -102,7 +121,7 @@ export default function Home() {
 				<StepIndicator steps={STEPS} currentIndex={currentStepIndex} />
 
 				{currentStepIndex === 0 && (
-					<>
+					<VStack p={4}>
 						{/* プレイヤー人数入力 */}
 						<Heading as="h3" size="lg" mt={8}>
 							プレイヤー人数を入力
@@ -113,7 +132,12 @@ export default function Home() {
 							min={MIN_PLAYER_COUNT}
 							max={MAX_PLAYER_COUNT}
 						/>
-					</>
+						<CategoriesAccordion
+							categories={categories}
+							selectedCategories={selectedCategories}
+							setSelectedCategories={setSelectedCategories}
+						/>
+					</VStack>
 				)}
 
 				{currentStepIndex === 1 && (

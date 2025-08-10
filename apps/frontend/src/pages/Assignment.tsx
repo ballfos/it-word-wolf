@@ -15,12 +15,15 @@ export default function Assignment() {
 			navigate("/");
 		}
 		// プレイヤー情報を取得
-		const { players } = location.state as {
+		const { players, categories } = location.state as {
 			players: { name: string; isWolf: boolean; word: Word }[];
+			categories: { id: number; name: string }[];
 		};
+		console.log(categories);
 
 		async function fetchData() {
-			const words = await fetchWords(1, 1);
+			const categoryId = categories[Math.floor(Math.random() * categories.length)].id;
+			const words = await fetchWords(categoryId, 1);
 			if (!words || words.length === 0) {
 				alert("お題の取得に失敗しました。");
 				navigate("/");
@@ -47,6 +50,7 @@ export default function Assignment() {
 					})),
 					citizenWord: words[citizenWordIndex],
 					wolfWord: words[wolfWordIndex],
+					categories: categories,
 				},
 			});
 		}
