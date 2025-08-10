@@ -15,11 +15,12 @@ export default function Assignment() {
 			navigate("/");
 		}
 		// プレイヤー情報を取得
-		const { players, categories, minLevel, maxLevel } = location.state as {
+		const { players, categories, minLevel, maxLevel, difficulties } = location.state as {
 			players: { name: string; isWolf: boolean; word: Word }[];
 			categories: { id: number; name: string }[];
 			minLevel: number;
 			maxLevel: number;
+			difficulties: { id: number; name: string }[];
 		};
 		console.log(categories);
 
@@ -58,6 +59,9 @@ export default function Assignment() {
 					categories: categories,
 					minLevel,
 					maxLevel,
+					categoryId,
+					difficultyLevel,
+					difficulties
 				},
 			});
 		}
