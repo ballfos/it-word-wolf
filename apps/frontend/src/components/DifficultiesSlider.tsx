@@ -1,9 +1,5 @@
 import { Slider } from "@chakra-ui/react";
-
-export type Difficulty = {
-    id: number;
-    name: string;
-};
+import type { Difficulty } from "@/api";
 export type marks = {
     value: number;
     label: string;

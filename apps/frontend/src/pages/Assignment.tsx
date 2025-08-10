@@ -14,26 +14,31 @@ export default function Assignment() {
 		if (!location.state) {
 			navigate("/");
 		}
-		// プレイヤー情報を取得
-		const { players, categories, minLevel, maxLevel, difficulties } = location.state as {
-			players: { name: string; isWolf: boolean; word: Word }[];
-			categories: { id: number; name: string }[];
-			minLevel: number;
-			maxLevel: number;
-			difficulties: { id: number; name: string }[];
-		};
+
+		const { players, categories, minLevel, maxLevel, difficulties, wolfCount } =
+			location.state as {
+				players: { name: string; isWolf: boolean; word: Word }[];
+				categories: { id: number; name: string }[];
+				minLevel: number;
+				maxLevel: number;
+				difficulties: { id: number; name: string }[];
+				wolfCount: number;
+			};
 
 		async function fetchData() {
-			const categoryId = categories[Math.floor(Math.random() * categories.length)].id;
-			const difficultyLevel = Math.floor(Math.random() * (maxLevel - minLevel + 1)) + minLevel;
+			const categoryId =
+				categories[Math.floor(Math.random() * categories.length)].id;
+			const difficultyLevel =
+				Math.floor(Math.random() * (maxLevel - minLevel + 1)) + minLevel;
 			const words = await fetchWords(categoryId, difficultyLevel);
+
 			if (!words || words.length === 0) {
 				alert("お題の取得に失敗しました。");
 				navigate("/");
 				return;
 			}
-			// 市民と人狼の割り当て
-			const wolfIndex = Math.floor(Math.random() * players.length);
+
+			// 市民ワード & 人狼ワード
 			const citizenWordIndex = Math.floor(Math.random() * words.length);
 			const wolfWordIndex =
 				(citizenWordIndex +
@@ -41,38 +46,44 @@ export default function Assignment() {
 					1) %
 				words.length;
 
+			// 順番を変えずにランダムなインデックスをwolfCount分選ぶ
+			const wolfIndices = new Set<number>();
+			while (wolfIndices.size < wolfCount) {
+				wolfIndices.add(Math.floor(Math.random() * players.length));
+			}
+
+			// 元配列を元にisWolfとwordを設定
+			const assignedPlayers = players.map((player, index) => ({
+				...player,
+				isWolf: wolfIndices.has(index),
+				word: wolfIndices.has(index)
+					? words[wolfWordIndex]
+					: words[citizenWordIndex],
+			}));
+
 			navigate("/confirmation", {
 				state: {
-					players: players.map((player, index) => ({
-						name: player.name,
-						isWolf: index === wolfIndex,
-						word:
-							index === wolfIndex
-								? words[wolfWordIndex]
-								: words[citizenWordIndex],
-					})),
+					players: assignedPlayers,
 					citizenWord: words[citizenWordIndex],
 					wolfWord: words[wolfWordIndex],
-					categories: categories,
+					categories,
 					minLevel,
 					maxLevel,
 					categoryId,
 					difficultyLevel,
-					difficulties
+					difficulties,
+					wolfCount,
 				},
 			});
 		}
+
 		fetchData();
 	}, [location.state, navigate]);
 
-	// プレイヤー情報がない場合はホームにリダイレクト
 	if (!location.state) {
 		return null;
 	}
 
-	/* ===========================
-	 * レンダリング
-	 * =========================== */
 	return (
 		<VStack
 			minH="100svh"
