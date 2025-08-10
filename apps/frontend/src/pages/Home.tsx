@@ -80,6 +80,10 @@ export default function Home() {
 				alert("プレイヤー名は重複しないように入力してください。");
 				return;
 			}
+			if (selectedCategories.length === 0) {
+				alert("カテゴリを1つ以上選択してください。");
+				return;
+			}
 
 			navigate("/assignment", {
 				state: {
