@@ -14,8 +14,11 @@ import NumberStepper from "@/components/NumberStepper";
 import StepIndicator from "@/components/StepIndicator";
 import TextInputList from "@/components/TextInputList";
 import CategoriesAccordion from "@/components/CategoriesAccordion";
+import DifficultiesSlider from "@/components/DifficultiesSlider";
 import useCategories from "@/hooks/useCategories";
-const STEPS = ["ルール設定", "名前入力"];
+import useDifficulties from "@/hooks/useDifficulties";
+import { getMaxBelowHalf } from "@/utils";
+const STEPS = ["人数入力", "名前入力", "難易度・カテゴリ選択"];
 const MIN_PLAYER_COUNT = 3;
 const MAX_PLAYER_COUNT = 20;
 
@@ -23,17 +26,28 @@ export default function Home() {
 	const navigate = useNavigate();
 	const [currentStepIndex, setCurrentStepIndex] = useState(0);
 	const [playerCount, setPlayerCount] = useState(4);
+	const [wolfCount, setWolfCount] = useState(1);
+	const [maxWolfCount, setMaxWolfCount] = useState(1);
 	const [playerNames, setPlayerNames] = useState<string[]>(
 		Array(playerCount).fill(""),
 	);
 	// カテゴリの取得
 	const { categories, selectedCategories, setSelectedCategories } =
 		useCategories();
+	const difficulties = useDifficulties();
+	const [minLevel, setMinLevel] = useState<number>(1);
+	const [maxLevel, setMaxLevel] = useState<number>(4);
 
+	useEffect(() => {
+		setMaxWolfCount(getMaxBelowHalf(playerCount));
+		if (wolfCount > maxWolfCount) {
+			setWolfCount(maxWolfCount);
+		}
+	}, [playerCount, maxWolfCount, wolfCount]);
 
 	useEffect(() => {
 		setPlayerNames(Array(playerCount).fill(""));
-	}, [playerCount]);	/* ===========================
+	}, [playerCount]); /* ===========================
 	 * イベントハンドラ
 	 * =========================== */
 	const handleClearPlayerNames = () => {
@@ -66,6 +80,10 @@ export default function Home() {
 				alert("プレイヤー名は重複しないように入力してください。");
 				return;
 			}
+			if (selectedCategories.length === 0) {
+				alert("カテゴリを1つ以上選択してください。");
+				return;
+			}
 
 			navigate("/assignment", {
 				state: {
@@ -76,6 +94,10 @@ export default function Home() {
 						id: category.id,
 						name: category.name,
 					})),
+					minLevel,
+					maxLevel,
+					difficulties,
+					wolfCount,
 				},
 			});
 		}
@@ -120,10 +142,14 @@ export default function Home() {
 							min={MIN_PLAYER_COUNT}
 							max={MAX_PLAYER_COUNT}
 						/>
-						<CategoriesAccordion
-							categories={categories}
-							selectedCategories={selectedCategories}
-							setSelectedCategories={setSelectedCategories}
+						<Heading as="h3" size="lg" mt={8}>
+							ウルフの人数を入力
+						</Heading>
+						<NumberStepper
+							value={wolfCount}
+							onValueChange={setWolfCount}
+							min={1}
+							max={maxWolfCount}
 						/>
 					</VStack>
 				)}
@@ -168,6 +194,26 @@ export default function Home() {
 							</Button>
 						</HStack>
 					</>
+				)}
+				{currentStepIndex === 2 && (
+					<VStack p={4}>
+						{/* 難易度・カテゴリ選択 */}
+						<Heading as="h3" size="lg" mt={8}>
+							難易度・カテゴリを選択
+						</Heading>
+						<DifficultiesSlider
+							minLevel={minLevel}
+							maxLevel={maxLevel}
+							setMinLevel={setMinLevel}
+							setMaxLevel={setMaxLevel}
+							difficulties={difficulties}
+						/>
+						<CategoriesAccordion
+							categories={categories}
+							selectedCategories={selectedCategories}
+							setSelectedCategories={setSelectedCategories}
+						/>
+					</VStack>
 				)}
 
 				<Separator w="full" my={2} />

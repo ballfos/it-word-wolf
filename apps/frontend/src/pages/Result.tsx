@@ -29,6 +29,12 @@ export default function Result() {
 	if (!location.state) {
 		return null;
 	}
+	const { categories, categoryId, difficulties, difficultyLevel } = location.state as {
+		categories: { id: number; name: string }[];
+		categoryId: number;
+		difficulties: { id: number; name: string }[];
+		difficultyLevel: number;
+	};
 
 	/* ===========================
 	 * イベントハンドラ
@@ -46,6 +52,12 @@ export default function Result() {
 		<Center minH="100svh" w="100vw" p={4}>
 			<VStack gap={4} w="md">
 				<Heading>結果</Heading>
+				<Text fontSize="lg" color="gray.500">
+					カテゴリ: {categories.find(c => c.id === categoryId)?.name || "不明"}
+				</Text>
+				<Text fontSize="lg" color="gray.500">
+					難易度: {difficulties.find(d => d.id === difficultyLevel)?.name || "不明"}
+				</Text>
 				<VStack gap={4} w="full">
 					<WordResultCard
 						word={citizenWord}
