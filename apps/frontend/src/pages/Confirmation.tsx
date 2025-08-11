@@ -68,7 +68,9 @@ export default function Confirmation() {
 				{showWord && (
 					<>
 						<Text fontSize="xl" fontWeight="bold">
-							{`${players[currentIndex].word.wordEn} (${players[currentIndex].word.wordJa})`}
+							{players[currentIndex].word.wordJa === null
+								? players[currentIndex].word.wordEn
+								: `${players[currentIndex].word.wordEn} (${players[currentIndex].word.wordJa})`}
 						</Text>
 						<Text fontSize="md" color="gray.300">
 							{players[currentIndex].word.explanation}

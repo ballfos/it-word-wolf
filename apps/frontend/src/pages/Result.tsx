@@ -29,12 +29,13 @@ export default function Result() {
 	if (!location.state) {
 		return null;
 	}
-	const { categories, categoryId, difficulties, difficultyLevel } = location.state as {
-		categories: { id: number; name: string }[];
-		categoryId: number;
-		difficulties: { id: number; name: string }[];
-		difficultyLevel: number;
-	};
+	const { categories, categoryId, difficulties, difficultyLevel } =
+		location.state as {
+			categories: { id: number; name: string }[];
+			categoryId: number;
+			difficulties: { id: number; name: string }[];
+			difficultyLevel: number;
+		};
 
 	/* ===========================
 	 * イベントハンドラ
@@ -53,10 +54,12 @@ export default function Result() {
 			<VStack gap={4} w="md">
 				<Heading>結果</Heading>
 				<Text fontSize="lg" color="gray.500">
-					カテゴリ: {categories.find(c => c.id === categoryId)?.name || "不明"}
+					カテゴリ:{" "}
+					{categories.find((c) => c.id === categoryId)?.name || "不明"}
 				</Text>
 				<Text fontSize="lg" color="gray.500">
-					難易度: {difficulties.find(d => d.id === difficultyLevel)?.name || "不明"}
+					難易度:{" "}
+					{difficulties.find((d) => d.id === difficultyLevel)?.name || "不明"}
 				</Text>
 				<VStack gap={4} w="full">
 					<WordResultCard
@@ -115,7 +118,11 @@ function WordResultCard({
 				{isWolf ? "人狼" : "市民"}
 			</Heading>
 			<Text fontSize="xl" color="white">
-				{showWord ? `${word.wordEn} (${word.wordJa})` : "??????"}
+				{showWord
+					? word.wordJa
+						? `${word.wordEn} (${word.wordJa})`
+						: word.wordEn
+					: "??????"}
 			</Text>
 			<Text fontSize="md" color="gray.300">
 				{showWord ? word.explanation : "??????????????????"}

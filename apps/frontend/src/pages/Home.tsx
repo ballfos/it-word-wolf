@@ -18,7 +18,7 @@ import DifficultiesSlider from "@/components/DifficultiesSlider";
 import useCategories from "@/hooks/useCategories";
 import useDifficulties from "@/hooks/useDifficulties";
 import { getMaxBelowHalf } from "@/utils";
-const STEPS = ["人数入力", "名前入力", "難易度・カテゴリ選択"];
+const STEPS = ["人数入力", "名前入力", "詳細設定"];
 const MIN_PLAYER_COUNT = 3;
 const MAX_PLAYER_COUNT = 20;
 
@@ -62,6 +62,17 @@ export default function Home() {
 	};
 
 	const handleNext = () => {
+		if (currentStepIndex === 1) {
+			if (playerNames.some((name) => name.trim() === "")) {
+				alert("全てのプレイヤー名を入力してください。");
+				return;
+			}
+			if (new Set(playerNames).size !== playerNames.length) {
+				alert("プレイヤー名は重複しないように入力してください。");
+				return;
+			}
+		}
+
 		if (currentStepIndex < STEPS.length - 1) {
 			setCurrentStepIndex((prev) => Math.min(prev + 1, STEPS.length - 1));
 		} else {
@@ -72,14 +83,7 @@ export default function Home() {
 				);
 				return;
 			}
-			if (playerNames.some((name) => name.trim() === "")) {
-				alert("全てのプレイヤー名を入力してください。");
-				return;
-			}
-			if (new Set(playerNames).size !== playerNames.length) {
-				alert("プレイヤー名は重複しないように入力してください。");
-				return;
-			}
+
 			if (selectedCategories.length === 0) {
 				alert("カテゴリを1つ以上選択してください。");
 				return;
