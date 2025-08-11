@@ -8,7 +8,7 @@ import {
 	Text,
 	VStack,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LuEye, LuEyeClosed } from "react-icons/lu";
 import { MdGames, MdHome } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -21,14 +21,22 @@ export default function Result() {
 	const [showCitizen, setShowCitizen] = useState(false);
 	const [showWolf, setShowWolf] = useState(false);
 
+	useEffect(() => {
+		if (!location.state) {
+			navigate("/", { replace: true });
+		}
+	}, [location.state, navigate]);
+
+	if (!location.state) {
+		return null;
+	}
+
 	const { citizenWord, wolfWord } = location.state as {
 		players: { name: string; isWolf: boolean; word: Word }[];
 		citizenWord: Word;
 		wolfWord: Word;
 	};
-	if (!location.state) {
-		return null;
-	}
+
 	const { categories, categoryId, difficulties, difficultyLevel } =
 		location.state as {
 			categories: { id: number; name: string }[];
