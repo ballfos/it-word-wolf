@@ -117,7 +117,7 @@ export default function Home() {
 		<VStack minH="100svh" w="100svw" pt="10" p={4}>
 			{/* タイトル */}
 			<Heading as="h1" size="4xl" mb={4} textAlign="center">
-				エンジニア
+				ITエンジニア
 				<br />
 				ワードウルフ
 			</Heading>
