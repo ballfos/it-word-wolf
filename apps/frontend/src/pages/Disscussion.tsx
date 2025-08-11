@@ -16,11 +16,18 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import useTimer from "@/hooks/useTimer";
 import { formatTime } from "@/utils";
+import { useEffect } from "react";
 
 export default function Disscussion() {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const { time, isRunning, start, stop, rewind, forward } = useTimer(5 * 60);
+
+	useEffect(() => {
+		if (!location.state) {
+			navigate("/", { replace: true });
+		}
+	}, [location.state, navigate]);
 
 	if (!location.state) {
 		return null;
