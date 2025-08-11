@@ -17,7 +17,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import useTimer from "@/hooks/useTimer";
 import { formatTime } from "@/utils";
 
-export default function Disscussion() {
+export default function Discussion() {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const { time, isRunning, start, stop, rewind, forward } = useTimer(5 * 60);

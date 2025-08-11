@@ -1,18 +1,20 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Assignment from "./pages/Assignment";
 import Confirmation from "./pages/Confirmation";
-import Disscussion from "./pages/Disscussion";
+import Discussion from "./pages/Discussion";
 import Home from "./pages/Home";
 import Result from "./pages/Result";
+import Configurations from "./pages/Configurations";
 
 function App() {
 	return (
 		<Router>
 			<Routes>
-				<Route index element={<Home />} />
+				<Route path="/" element={<Home />} />
+				<Route path="/config" element={<Configurations />} />
 				<Route path="/assignment" element={<Assignment />} />
 				<Route path="/confirmation" element={<Confirmation />} />
-				<Route path="/disscussion" element={<Disscussion />} />
+				<Route path="/discussion" element={<Discussion />} />
 				<Route path="/result" element={<Result />} />
 			</Routes>
 		</Router>
