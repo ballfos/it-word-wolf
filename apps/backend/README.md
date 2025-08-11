@@ -1,21 +1,21 @@
-```txt
-npm install
-npm run dev
-```
+## 実行
 
-```txt
-npm run deploy
-```
+1. 用語を格納したデータベース`iww.db`を用意する．
 
-[For generating/synchronizing types based on your Worker configuration run](https://developers.cloudflare.com/workers/wrangler/commands/#types):
+2. `iww.db`を`iww.sql`に変換する．
 
-```txt
-npm run cf-typegen
-```
+  ```sh
+  sqlite3 iww.db .dump > iww.sql
+  ```
 
-Pass the `CloudflareBindings` as generics when instantiation `Hono`:
+3. ローカルデータベースにデータを挿入する．
 
-```ts
-// src/index.ts
-const app = new Hono<{ Bindings: CloudflareBindings }>()
-```
+  ```sh
+  npx wrangler d1 execute iww-db --file iww.sql
+  ```
+
+4. サーバを立ち上げる
+
+   ```sh
+   npm run dev
+   ```
