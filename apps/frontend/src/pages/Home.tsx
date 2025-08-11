@@ -18,7 +18,7 @@ import DifficultiesSlider from "@/components/DifficultiesSlider";
 import useCategories from "@/hooks/useCategories";
 import useDifficulties from "@/hooks/useDifficulties";
 import { getMaxBelowHalf } from "@/utils";
-const STEPS = ["人数入力", "名前入力", "難易度・カテゴリ選択"];
+const STEPS = ["人数入力", "名前入力", "詳細設定"];
 const MIN_PLAYER_COUNT = 3;
 const MAX_PLAYER_COUNT = 20;
 
