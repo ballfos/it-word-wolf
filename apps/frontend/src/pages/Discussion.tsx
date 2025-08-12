@@ -18,7 +18,7 @@ import useTimer from "@/hooks/useTimer";
 import { formatTime } from "@/utils";
 import { useEffect } from "react";
 
-export default function Disscussion() {
+export default function Discussion() {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const { time, isRunning, start, stop, rewind, forward } = useTimer(5 * 60);
