@@ -34,7 +34,7 @@ export default function Confirmation() {
 	};
 	const handleNextPlayer = () => {
 		if (currentIndex === players.length - 1) {
-			navigate("/disscussion", {
+			navigate("/discussion", {
 				state: location.state,
 			});
 			return;
