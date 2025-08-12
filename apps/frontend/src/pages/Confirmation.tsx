@@ -10,18 +10,16 @@ export default function Confirmation() {
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [showWord, setShowWord] = useState(false);
 
-	/* ===========================
-	 * データ取得
-	 * =========================== */
 	useEffect(() => {
 		if (!location.state) {
 			navigate("/");
 		}
 	}, [location.state, navigate]);
-	// プレイヤー情報がない場合はホームにリダイレクト
+
 	if (!location.state) {
 		return null;
 	}
+
 	const { players } = location.state as {
 		players: { name: string; isWolf: boolean; word: Word }[];
 	};
