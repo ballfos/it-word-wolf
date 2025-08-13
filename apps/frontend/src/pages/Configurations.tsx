@@ -18,6 +18,7 @@ import DifficultiesSlider from "@/components/DifficultiesSlider";
 import useCategories from "@/hooks/useCategories";
 import useDifficulties from "@/hooks/useDifficulties";
 import { getMaxBelowHalf } from "@/utils";
+import GradientCard from "@/components/GradientCard";
 const STEPS = ["人数入力", "名前入力", "詳細設定"];
 const MIN_PLAYER_COUNT = 3;
 const MAX_PLAYER_COUNT = 20;
@@ -118,23 +119,8 @@ export default function Configurations() {
 	 * レンダリング
 	 * =========================== */
 	return (
-		<VStack minH="100svh" w="100svw" pt="10" p={4}>
-			{/* タイトル */}
-			<Heading as="h1" size="4xl" mb={4} textAlign="center">
-				ITエンジニア
-				<br />
-				ワードウルフ
-			</Heading>
-			<VStack
-				bgGradient="to-br"
-				gradientFrom="teal.700"
-				gradientTo="blue.700"
-				p={8}
-				borderRadius="md"
-				boxShadow="lg"
-				w="full"
-				maxW="md"
-			>
+		<Center flexGrow={1} w="full" p={4}>
+			<GradientCard w="full" maxW="md" px={6} py={10}>
 				{/* ステップインジケーター */}
 				<StepIndicator steps={STEPS} currentIndex={currentStepIndex} />
 
@@ -248,7 +234,7 @@ export default function Configurations() {
 						<Icon as={LuArrowRight} />
 					</Button>
 				</HStack>
-			</VStack>
-		</VStack>
+			</GradientCard>
+		</Center>
 	);
 }

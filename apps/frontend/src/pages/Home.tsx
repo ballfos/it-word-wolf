@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 export default function Home() {
 	return (
-		<Center minH="100svh" w="100vw" p={4}>
+		<Center flexGrow="1" p={4}>
 			<GradientCard w="full" maxW="md">
 				<Heading size="2xl">ITエンジニアワードウルフ</Heading>
 				<Separator w="full" />

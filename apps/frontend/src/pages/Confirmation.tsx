@@ -46,7 +46,7 @@ export default function Confirmation() {
 	 * =========================== */
 	// 順番にプレイヤー情報を表示
 	return (
-		<Center h="100svh" w="100vw" px={4}>
+		<Center flexGrow={1} w="full" p={4}>
 			<VStack
 				bgGradient="to-br"
 				gradientFrom="teal.700"

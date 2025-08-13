@@ -34,7 +34,7 @@ export default function Discussion() {
 	}
 
 	return (
-		<Center minH="100svh" w="100vw" p={4}>
+		<Center flexGrow={1} w="full" p={4}>
 			<VStack
 				bgGradient="to-br"
 				gradientFrom="teal.700"
