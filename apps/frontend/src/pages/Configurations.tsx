@@ -119,7 +119,7 @@ export default function Configurations() {
 	 * レンダリング
 	 * =========================== */
 	return (
-		<Center flexGrow={1} w="full" m={4}>
+		<Center flexGrow={1} w="full" p={4}>
 			<GradientCard w="full" maxW="md" px={6} py={10}>
 				{/* ステップインジケーター */}
 				<StepIndicator steps={STEPS} currentIndex={currentStepIndex} />
