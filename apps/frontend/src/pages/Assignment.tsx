@@ -1,4 +1,4 @@
-import { Heading, Spinner, VStack } from "@chakra-ui/react";
+import { Center, Heading, Spinner, VStack } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchWords, type Word } from "@/api";
@@ -85,16 +85,11 @@ export default function Assignment() {
 	}
 
 	return (
-		<VStack
-			minH="100svh"
-			w="100svw"
-			pt="10"
-			justifyContent="center"
-			px={4}
-			gap={4}
-		>
-			<Heading>お題生成中</Heading>
-			<Spinner />
-		</VStack>
+		<Center flexGrow={1} w="full" p={4}>
+			<VStack pt="10" justifyContent="center" px={4} gap={4}>
+				<Heading>お題生成中</Heading>
+				<Spinner />
+			</VStack>
+		</Center>
 	);
 }

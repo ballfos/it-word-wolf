@@ -49,7 +49,7 @@ export default function Result() {
 	 * イベントハンドラ
 	 * =========================== */
 	const handleBackToHome = () => {
-		navigate("/");
+		navigate("/config");
 	};
 	const handleNextGame = () => {
 		navigate("/assignment", {
@@ -58,7 +58,7 @@ export default function Result() {
 	};
 
 	return (
-		<Center minH="100svh" w="100vw" p={4}>
+		<Center flexGrow={1} w="full" p={4}>
 			<VStack gap={4} w="md">
 				<Heading>結果</Heading>
 				<Text fontSize="lg" color="gray.500">
@@ -84,13 +84,15 @@ export default function Result() {
 					/>
 					<HStack justifyContent="space-between" w="full">
 						<Button
+							minW="45%"
 							colorScheme="teal"
 							size="lg"
 							onClick={() => handleBackToHome()}
 						>
-							<MdHome /> ホームに戻る
+							<MdHome /> 設定に戻る
 						</Button>
 						<Button
+							minW="45%"
 							colorScheme="blue"
 							size="lg"
 							onClick={() => handleNextGame()}
