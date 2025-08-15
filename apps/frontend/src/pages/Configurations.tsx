@@ -7,6 +7,7 @@ import {
 	Separator,
 	VStack,
 } from "@chakra-ui/react";
+import { toaster } from "@/components/ui/toaster";
 import { useEffect, useState } from "react";
 import { LuArrowLeft, LuArrowRight, LuUser } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
@@ -65,11 +66,21 @@ export default function Configurations() {
 	const handleNext = () => {
 		if (currentStepIndex === 1) {
 			if (playerNames.some((name) => name.trim() === "")) {
-				alert("全てのプレイヤー名を入力してください。");
+				toaster.create({
+					description: "全てのプレイヤー名を入力してください。",
+					type: "error",
+					closable: true,
+					duration: 3000,
+				});
 				return;
 			}
 			if (new Set(playerNames).size !== playerNames.length) {
-				alert("プレイヤー名は重複しないように入力してください。");
+				toaster.create({
+					description: "プレイヤー名は重複しないように入力してください。",
+					type: "error",
+					closable: true,
+					duration: 3000,
+				});
 				return;
 			}
 		}
@@ -79,14 +90,22 @@ export default function Configurations() {
 		} else {
 			// 入力のバリデーション
 			if (playerCount < MIN_PLAYER_COUNT || playerCount > MAX_PLAYER_COUNT) {
-				alert(
-					`プレイヤー人数は${MIN_PLAYER_COUNT}〜${MAX_PLAYER_COUNT}の範囲で入力してください。`,
-				);
+				toaster.create({
+					description: `プレイヤー人数は${MIN_PLAYER_COUNT}〜${MAX_PLAYER_COUNT}の範囲で入力してください。`,
+					type: "error",
+					closable: true,
+					duration: 3000,
+				});
 				return;
 			}
 
 			if (selectedCategories.length === 0) {
-				alert("カテゴリを1つ以上選択してください。");
+				toaster.create({
+					description: "カテゴリを1つ以上選択してください。",
+					type: "error",
+					closable: true,
+					duration: 3000,
+				});
 				return;
 			}
 
