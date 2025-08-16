@@ -30,9 +30,7 @@ export default function CheckBoxList({
 			>
 				<Checkbox.HiddenInput />
 				<Checkbox.Control />
-				<Checkbox.Label>
-					{items.length === selectedItems.length ? "選択解除" : "全て選択"}
-				</Checkbox.Label>
+				<Checkbox.Label>{allChecked ? "選択解除" : "全て選択"}</Checkbox.Label>
 			</Checkbox.Root>
 			<CheckboxGroup
 				ms={6}
