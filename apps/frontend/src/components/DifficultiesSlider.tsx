@@ -32,7 +32,7 @@ export default function DifficultiesSlider({
 	}));
 	return (
 		<Slider.Root
-			width="200px"
+			w="full"
 			value={[minLevel, maxLevel]}
 			step={1}
 			min={1}

@@ -1,11 +1,4 @@
-import {
-	Checkbox,
-	CheckboxCard,
-	CheckboxGroup,
-	Fieldset,
-	For,
-	VStack,
-} from "@chakra-ui/react";
+import { Checkbox, CheckboxGroup, For, VStack } from "@chakra-ui/react";
 
 interface CheckBoxListProps {
 	items: string[];

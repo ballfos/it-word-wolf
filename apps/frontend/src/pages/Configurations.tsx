@@ -14,7 +14,6 @@ import { useNavigate } from "react-router-dom";
 import NumberStepper from "@/components/NumberStepper";
 import StepIndicator from "@/components/StepIndicator";
 import TextInputList from "@/components/TextInputList";
-import CategoriesAccordion from "@/components/CategoriesAccordion";
 import DifficultiesSlider from "@/components/DifficultiesSlider";
 import useCategories from "@/hooks/useCategories";
 import useDifficulties from "@/hooks/useDifficulties";
@@ -205,8 +204,9 @@ export default function Configurations() {
 								onClick={handleClearPlayerNames}
 								mb={4}
 								size="sm"
+								w="24"
 							>
-								入力削除
+								全削除
 							</Button>
 							<Button
 								colorScheme="teal"
@@ -214,8 +214,9 @@ export default function Configurations() {
 								onClick={handleFillPlayerNames}
 								mb={4}
 								size="sm"
+								w="24"
 							>
-								入力自動
+								自動入力
 							</Button>
 						</HStack>
 					</>
