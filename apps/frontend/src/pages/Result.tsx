@@ -14,6 +14,9 @@ import { MdGames, MdHome } from "react-icons/md";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { Word } from "@/api";
 
+const HIDDEN_WORD_PLACEHOLDER = "??????";
+const HIDDEN_EXPLANATION_PLACEHOLDER = "??????????????????";
+
 export default function Result() {
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -127,15 +130,25 @@ function WordResultCard({
 			<Heading size="md" color={isWolf ? "red.400" : "green.400"}>
 				{isWolf ? "人狼" : "市民"}
 			</Heading>
-			<Text fontSize="xl" color="white">
-				{showWord
-					? word.wordJa
-						? `${word.wordEn} (${word.wordJa})`
-						: word.wordEn
-					: "??????"}
-			</Text>
+			{showWord ? (
+				<VStack align="center" w="full">
+					<Text fontSize="xl" fontWeight="bold">
+						{word.wordEn}
+					</Text>
+					{word.wordJa && (
+						<Text fontSize="md" fontWeight="semibold">
+							{word.wordJa}
+						</Text>
+					)}
+				</VStack>
+			) : (
+				<Text fontSize="xl" fontWeight="bold">
+					{HIDDEN_WORD_PLACEHOLDER}
+				</Text>
+			)}
+
 			<Text fontSize="md" color="gray.300">
-				{showWord ? word.explanation : "??????????????????"}
+				{showWord ? word.explanation : HIDDEN_EXPLANATION_PLACEHOLDER}
 			</Text>
 		</VStack>
 	);

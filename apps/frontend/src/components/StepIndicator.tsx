@@ -20,7 +20,7 @@ export default function StepIndicator({
 				<Text
 					key={index}
 					fontWeight={index === currentIndex ? "bold" : "normal"}
-					color={index === currentIndex ? "yellow.300" : "gray.500"}
+					color={index === currentIndex ? "purple.400" : "gray.300"}
 				>
 					{step}
 				</Text>
