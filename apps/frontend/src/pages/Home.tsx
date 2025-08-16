@@ -6,7 +6,7 @@ export default function Home() {
 	return (
 		<Center flexGrow="1" p={4}>
 			<GradientCard w="full" maxW="md">
-				<Heading size="2xl">ITエンジニアワードウルフ</Heading>
+				<Heading size="2xl">エンジニアワードウルフ</Heading>
 				<Separator w="full" />
 				<Text fontSize="lg">
 					ITエンジニア用語で遊ぶ、新感覚のワードウルフ！1000個以上のお題から難易度、ジャンルが選べるので初心者から上級者まで楽しめます！
