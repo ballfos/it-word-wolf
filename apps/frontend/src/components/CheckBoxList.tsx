@@ -1,4 +1,11 @@
-import { CheckboxCard, CheckboxGroup, VStack } from "@chakra-ui/react";
+import {
+	Checkbox,
+	CheckboxCard,
+	CheckboxGroup,
+	Fieldset,
+	For,
+	VStack,
+} from "@chakra-ui/react";
 
 interface CheckBoxListProps {
 	items: string[];
@@ -11,19 +18,50 @@ export default function CheckBoxList({
 	selectedItems,
 	onChange,
 }: CheckBoxListProps) {
+	const allChecked = items.length === selectedItems.length;
+	const indeterminate = selectedItems.length > 0 && !allChecked;
+
 	return (
-		<CheckboxGroup
-			value={selectedItems}
-			onValueChange={(values) => values && onChange(values)}
-		>
-			<VStack align="start" gap={4}>
-				{items.map((item) => (
-					<CheckboxCard.Root key={item} value={item}>
-						<CheckboxCard.Label>{item}</CheckboxCard.Label>
-						<CheckboxCard.Control />
-					</CheckboxCard.Root>
-				))}
-			</VStack>
-		</CheckboxGroup>
+		<VStack align="start" w="full" gap={4}>
+			<Checkbox.Root
+				variant="subtle"
+				checked={indeterminate ? "indeterminate" : allChecked}
+				onCheckedChange={() => {
+					if (allChecked) {
+						onChange([]);
+					} else {
+						onChange(items);
+					}
+				}}
+				cursor="pointer"
+			>
+				<Checkbox.HiddenInput />
+				<Checkbox.Control />
+				<Checkbox.Label>
+					{items.length === selectedItems.length ? "選択解除" : "全て選択"}
+				</Checkbox.Label>
+			</Checkbox.Root>
+			<CheckboxGroup
+				ms={6}
+				value={selectedItems}
+				onValueChange={(values) => onChange(values)}
+				gap={4}
+			>
+				<For each={items}>
+					{(item) => (
+						<Checkbox.Root
+							key={item}
+							value={item}
+							variant="subtle"
+							cursor="pointer"
+						>
+							<Checkbox.HiddenInput />
+							<Checkbox.Control />
+							<Checkbox.Label>{item}</Checkbox.Label>
+						</Checkbox.Root>
+					)}
+				</For>
+			</CheckboxGroup>
+		</VStack>
 	);
 }

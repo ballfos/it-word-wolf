@@ -20,12 +20,16 @@ import useCategories from "@/hooks/useCategories";
 import useDifficulties from "@/hooks/useDifficulties";
 import { getMaxBelowHalf } from "@/utils";
 import GradientCard from "@/components/GradientCard";
+import CheckBoxList from "@/components/CheckBoxList";
 const STEPS = ["人数入力", "名前入力", "詳細設定"];
 const MIN_PLAYER_COUNT = 3;
 const MAX_PLAYER_COUNT = 20;
 
 export default function Configurations() {
 	const navigate = useNavigate();
+	const difficulties = useDifficulties();
+	const categories = useCategories();
+
 	const [currentStepIndex, setCurrentStepIndex] = useState(0);
 	const [playerCount, setPlayerCount] = useState(4);
 	const [wolfCount, setWolfCount] = useState(1);
@@ -33,12 +37,16 @@ export default function Configurations() {
 	const [playerNames, setPlayerNames] = useState<string[]>(
 		Array(playerCount).fill(""),
 	);
-	// カテゴリの取得
-	const { categories, selectedCategories, setSelectedCategories } =
-		useCategories();
-	const difficulties = useDifficulties();
+
+	const [selectedCategoryNames, setSelectedCategoryNames] = useState<string[]>(
+		[],
+	);
 	const [minLevel, setMinLevel] = useState<number>(1);
 	const [maxLevel, setMaxLevel] = useState<number>(4);
+
+	useEffect(() => {
+		setSelectedCategoryNames(categories.map((category) => category.name));
+	}, [categories]);
 
 	useEffect(() => {
 		setMaxWolfCount(getMaxBelowHalf(playerCount));
@@ -99,7 +107,7 @@ export default function Configurations() {
 				return;
 			}
 
-			if (selectedCategories.length === 0) {
+			if (selectedCategoryNames.length === 0) {
 				toaster.create({
 					description: "カテゴリを1つ以上選択してください。",
 					type: "error",
@@ -114,10 +122,9 @@ export default function Configurations() {
 					players: playerNames.map((name) => ({
 						name: name.trim(),
 					})),
-					categories: selectedCategories.map((category) => ({
-						id: category.id,
-						name: category.name,
-					})),
+					categories: categories.filter((category) =>
+						selectedCategoryNames.includes(category.name),
+					),
 					minLevel,
 					maxLevel,
 					difficulties,
@@ -139,14 +146,19 @@ export default function Configurations() {
 	 * =========================== */
 	return (
 		<Center flexGrow={1} w="full" p={4}>
-			<GradientCard w="full" maxW="md" px={6} py={10}>
+			<GradientCard w="full" maxW="md" p={6}>
+				<Heading as="h2" size="xl">
+					ゲーム設定
+				</Heading>
+				<Separator w="full" />
+
 				{/* ステップインジケーター */}
 				<StepIndicator steps={STEPS} currentIndex={currentStepIndex} />
 
 				{currentStepIndex === 0 && (
 					<VStack p={4}>
 						{/* プレイヤー人数入力 */}
-						<Heading as="h3" size="lg" mt={8}>
+						<Heading as="h3" size="lg">
 							プレイヤー人数を入力
 						</Heading>
 						<NumberStepper
@@ -209,10 +221,10 @@ export default function Configurations() {
 					</>
 				)}
 				{currentStepIndex === 2 && (
-					<VStack p={4}>
-						{/* 難易度・カテゴリ選択 */}
-						<Heading as="h3" size="lg" mt={8}>
-							難易度・カテゴリを選択
+					<VStack p={4} gap={8}>
+						{/* 難易度選択 */}
+						<Heading as="h3" size="lg">
+							難易度選択
 						</Heading>
 						<DifficultiesSlider
 							minLevel={minLevel}
@@ -221,10 +233,15 @@ export default function Configurations() {
 							setMaxLevel={setMaxLevel}
 							difficulties={difficulties}
 						/>
-						<CategoriesAccordion
-							categories={categories}
-							selectedCategories={selectedCategories}
-							setSelectedCategories={setSelectedCategories}
+
+						{/* カテゴリ選択 */}
+						<Heading as="h3" size="lg">
+							カテゴリ選択
+						</Heading>
+						<CheckBoxList
+							items={categories.map((category) => category.name)}
+							selectedItems={selectedCategoryNames}
+							onChange={setSelectedCategoryNames}
 						/>
 					</VStack>
 				)}
