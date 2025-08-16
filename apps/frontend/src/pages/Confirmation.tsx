@@ -65,11 +65,16 @@ export default function Confirmation() {
 
 				{showWord && (
 					<>
-						<Text fontSize="xl" fontWeight="bold">
-							{players[currentIndex].word.wordJa === null
-								? players[currentIndex].word.wordEn
-								: `${players[currentIndex].word.wordEn} (${players[currentIndex].word.wordJa})`}
-						</Text>
+						<VStack align="center" w="full">
+							<Text fontSize="xl" fontWeight="bold">
+								{players[currentIndex].word.wordEn}
+							</Text>
+							{players[currentIndex].word.wordJa && (
+								<Text fontSize="md" fontWeight="semibold">
+									{players[currentIndex].word.wordJa}
+								</Text>
+							)}
+						</VStack>
 						<Text fontSize="md" color="gray.300">
 							{players[currentIndex].word.explanation}
 						</Text>

@@ -127,13 +127,30 @@ function WordResultCard({
 			<Heading size="md" color={isWolf ? "red.400" : "green.400"}>
 				{isWolf ? "人狼" : "市民"}
 			</Heading>
-			<Text fontSize="xl" color="white">
+			{/* <Text fontSize="xl" color="white">
 				{showWord
 					? word.wordJa
 						? `${word.wordEn} (${word.wordJa})`
 						: word.wordEn
 					: "??????"}
-			</Text>
+			</Text> */}
+			{showWord ? (
+				<VStack align="center" w="full">
+					<Text fontSize="xl" fontWeight="bold">
+						{word.wordEn}
+					</Text>
+					{word.wordJa && (
+						<Text fontSize="md" fontWeight="semibold">
+							{word.wordJa}
+						</Text>
+					)}
+				</VStack>
+			) : (
+				<Text fontSize="xl" fontWeight="bold">
+					???????
+				</Text>
+			)}
+
 			<Text fontSize="md" color="gray.300">
 				{showWord ? word.explanation : "??????????????????"}
 			</Text>
