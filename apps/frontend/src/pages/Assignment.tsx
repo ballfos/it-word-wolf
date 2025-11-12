@@ -47,10 +47,15 @@ export default function Assignment() {
 				words.length;
 
 			// 順番を変えずにランダムなインデックスをwolfCount分選ぶ
-			const wolfIndices = new Set<number>();
-			while (wolfIndices.size < wolfCount) {
-				wolfIndices.add(Math.floor(Math.random() * players.length));
+			const indices = Array.from({ length: players.length }, (_, i) => i);
+
+			// Fisher-Yatesシャッフル
+			for (let i = indices.length - 1; i > 0; i--) {
+				const j = Math.floor(Math.random() * (i + 1));
+				[indices[i], indices[j]] = [indices[j], indices[i]];
 			}
+
+			const wolfIndices = new Set(indices.slice(0, wolfCount));
 
 			// 元配列を元にisWolfとwordを設定
 			const assignedPlayers = players.map((player, index) => ({
