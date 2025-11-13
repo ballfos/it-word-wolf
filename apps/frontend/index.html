@@ -15,6 +15,14 @@
     <meta property="og:site_name" content="エンジニアワードウルフ" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="google-site-verification" content="5lzLL0jC8q7r4OBALKOWoLucAQdHzwHpb8VNdcUd08o" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <script>
+      if('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js', { scope: '/' })
+        })
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
